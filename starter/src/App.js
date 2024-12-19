@@ -6,7 +6,7 @@ import Bookshelf from "./Bookshelf";
 import "./App.css";
 
 function App() {
-  const [books, setBooks] = useState([]); 
+  const [books, setBooks] = useState([]);
   const [searchResults, setSearchResults] = useState([]);
 
   useEffect(() => {
@@ -15,22 +15,21 @@ function App() {
 
   const handleSearch = (query) => {
     if (query.trim()) {
-      search(query).then((result) => {
-        if (Array.isArray(result)) {
-          const updatedSearchResults = result.map(searchBook => {
-            const existingBook = books.find(book => book.id === searchBook.id);
-            return {
-              ...searchBook,
-              shelf: existingBook ? existingBook.shelf : 'none'
-            };
-          });
-          setSearchResults(updatedSearchResults);
-        } else {
+      search(query)
+        .then((result) => {
+          if (Array.isArray(result)) {
+            const updatedSearchResults = result.map((searchBook) => {
+              const existingBook = books.find((book) => book.id === searchBook.id);
+              return { ...searchBook, shelf: existingBook ? existingBook.shelf : "none" };
+            });
+            setSearchResults(updatedSearchResults);
+          } else {
+            setSearchResults([]);
+          }
+        })
+        .catch(() => {
           setSearchResults([]);
-        }
-      }).catch(() => {
-        setSearchResults([]);
-      });
+        });
     } else {
       setSearchResults([]);
     }
@@ -40,11 +39,8 @@ function App() {
     update(book, shelf).then(() => {
       getAll().then((updatedBooks) => {
         setBooks(updatedBooks);
-        
-        const updatedSearchResults = searchResults.map(searchBook => 
-          searchBook.id === book.id 
-            ? { ...searchBook, shelf } 
-            : searchBook
+        const updatedSearchResults = searchResults.map((searchBook) =>
+          searchBook.id === book.id ? { ...searchBook, shelf } : searchBook
         );
         setSearchResults(updatedSearchResults);
       });
@@ -83,11 +79,9 @@ function App() {
         </Route>
         <Route path="/search">
           <Search
-            query=""
-            onSearch={handleSearch}
             searchResults={searchResults}
+            onSearch={handleSearch}
             onShelfChange={handleShelfChange}
-            books={books}
           />
         </Route>
       </div>
